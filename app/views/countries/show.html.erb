@@ -1,0 +1,42 @@
+
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8"/>
+    <title>The Hello World of News Search</title>
+    <script src="https://www.google.com/jsapi"></script>
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+    <script type="text/javascript"></script>
+     <script>
+            $(document).ready(function() {
+                createStoryJS({
+                    type:       'timeline',
+                    width:      '800',
+                    height:     '600',
+                    source:     'path_to_json/or_link_to_googlespreadsheet',
+                    embed_id:   'my-timeline'
+                });
+            });
+    </script>
+  </head>
+  <body style="font-family: Arial;border: 0 none;">
+    <div id="branding"  style="float: left;" class="col-lg-4"></div><br />
+    <p id="notice"><%= notice %></p>
+
+    <p id="country_name">
+      <h1>Google News Results for <%= @country.name %>:</h1> <% @country_news["responseData"]["results"].each do |result| %>
+      <h2><a href=<%= result["unescapedUrl"] %>><%= result["title"].html_safe %></a></h2>
+      <p><%= result["content"].html_safe %></p>
+      <% end %>
+    </p>
+  <div id="New_York_Times">
+    <p>
+      <h1>New York Times Articles for the Past Two Months</h1>
+      <%= @country_NYT["response"]["docs"].each do |result| %>
+      <h2><a href=<%= result["web_url"] %>><%= result["headline"]["main"].html_safe %></a></h2>
+      <p><%= result["snippet"].html_safe %></p>
+        <%end%>
+    </p>
+  </div>
+</body>
+</html>
