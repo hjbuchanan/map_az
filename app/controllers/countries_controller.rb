@@ -23,12 +23,83 @@ class CountriesController < ApplicationController
     @country_news = JSON.parse(response.body)
 
     #NYT api response code
-    country_articles=HTTParty.get("http://api.nytimes.com/svc/search/v2/articlesearch.json?q=#{country_name}&begin_date=20131001&api-key=ae59fa9ced00c8e0934ee66358d80da6:1:68403659")
+    country_articles=HTTParty.get("http://api.nytimes.com/svc/search/v2/articlesearch.json?q=#{country_name}&begin_date=20131001&sort=oldest&pages=0&api-key=ae59fa9ced00c8e0934ee66358d80da6:1:68403659")
+    # country_articles=HTTParty.get("http://api.nytimes.com/svc/search/v2/articlesearch.json?q=#{country_name}&begin_date=20131001&sort=oldest&pages=0&api-key=ae59fa9ced00c8e0934ee66358d80da6:1:68403659")
     @country_NYT=JSON.parse(country_articles.body)
+    #take the nyt data and set it into a hash
+    @timeline_events_ar =[]
+    @country_NYT["response"]["docs"].each_with_index do |result, i|
+      @date_instance = {
+        "startDate" => Time.parse(result["pub_date"]).strftime("%Y,%m,%d"),
+        # "endDate" => Time.parse(result["pub_date"]).strftime("%Y,%m,%d"),
+        "headline" => result["headline"]["main"],
+        "text" => result["abstract"],
+        "tag" => "tag#{i%6}",
+        "classname" => "",
+        "asset" => {
+          "media" => result["web_url"],
+          "thumb_nail" => "",
+          "credit" => result["first_name"],
+          "caption" => result["snippet"]
+        }
+      }
+      @timeline_events_ar << @date_instance
+    end
+    @timeline = {
+      "timeline" => {
+        "headline" => "New York Times Timeline",
+        "type" => "default",
+        "startDate" => Time.parse(@country_NYT["response"]["docs"].first["pub_date"]).strftime("%Y,%m,%d"),
+        "date" => @timeline_events_ar
+      }
+    }
 
-    #render :json => @country_NYT
+
+  end
+
+  def get_timeline_json
+    @country = Country.find_by_name(params[:name])
+    @country_news = []
+    # if response = HTTParty.get("http://ajax.googleapis.com/ajax/services/search/news?v=1.0&q=#{params[:name]}")
+    #google news api code
+    country_name = URI::encode(@country.name)
 
 
+    #NYT api response code
+    country_articles=HTTParty.get("http://api.nytimes.com/svc/search/v2/articlesearch.json?q=#{country_name}&begin_date=20131001&sort=oldest&api-key=ae59fa9ced00c8e0934ee66358d80da6:1:68403659")
+    @country_NYT=JSON.parse(country_articles.body)
+    #take the nyt data and set it into a hash
+    @timeline_events_ar =[]
+    @country_NYT["response"]["docs"].each_with_index do |result, i|
+      @date_instance = {
+        "startDate" => Time.parse(result["pub_date"]).strftime("%Y,%m,%d"),
+        # "endDate" => Time.parse(result["pub_date"]).strftime("%Y,%m,%d"),
+        "headline" => result["headline"]["main"],
+        "text" => result["abstract"],
+        "tag" => "tag#{i%6}",
+        "classname" => "",
+        "asset" => {
+          "media" => result["web_url"],
+          "thumb_nail" => "",
+          "credit" => result["first_name"],
+          "caption" => result["snippet"]
+        }
+      }
+      @timeline_events_ar << @date_instance
+    end
+    @timeline = {
+      "timeline" => {
+        "headline" => "New York Times Timeline",
+        "type" => "default",
+        "startDate" => Time.parse(@country_NYT["response"]["docs"].first["pub_date"]).strftime("%Y,%m,%d"),
+        "date" => @timeline_events_ar
+      }
+    }
+    render :json => @timeline
+  end
+
+  def time_line
+    @country = Country.find_by_name(params[:name])
   end
 
   def get_article_urls(article)

@@ -9,7 +9,9 @@ MapAz::Application.routes.draw do
   root 'pages#index'
 
   get "country/:name" => "countries#show"
-  # Example of regular route:
+  get "country/:name/timeline" => "countries#get_timeline_json"
+  get "country/:name/time" => "countries#time_line"
+    # Example of regular route:
   #   get 'products/:id' => 'catalog#view'
 
   # Example of named route that can be invoked with purchase_url(id: product.id)

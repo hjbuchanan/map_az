@@ -1,0 +1,28 @@
+
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8"/>
+    <title>The Hello World of News Search</title>
+    <script src="https://www.google.com/jsapi"></script>
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+    <script src="/js/storyjs-embed.js"></script>
+    <script type="text/javascript"></script>
+     <script>
+            $(document).ready(function() {
+                createStoryJS({
+                    type:       'timeline',
+                    width:      '800',
+                    height:     '600',
+                    source:     '/country/<%=params[:name] %>/timeline',
+                    embed_id:   'my-timeline'
+                });
+            });
+    </script>
+  </head>
+  <body style="font-family: Arial;border: 0 none;">
+    <div id="branding"  style="float: left;" class="col-lg-4"></div><br />
+    <div id="my-timeline"></div>
+    <p id="notice"><%= notice %></p>
+</body>
+</html>

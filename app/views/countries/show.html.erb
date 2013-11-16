@@ -2,18 +2,25 @@
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
+    <style>
+    .timenav-tag div h3 {
+      display: none !important;
+    }
+    </style>
     <meta http-equiv="content-type" content="text/html; charset=utf-8"/>
     <title>The Hello World of News Search</title>
     <script src="https://www.google.com/jsapi"></script>
     <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+    <script src="/js/storyjs-embed.js"></script>
     <script type="text/javascript"></script>
      <script>
             $(document).ready(function() {
+                var timelineData = <%= @timeline.to_json.html_safe %>;
                 createStoryJS({
                     type:       'timeline',
-                    width:      '800',
+                    width:      "100%",
                     height:     '600',
-                    source:     'path_to_json/or_link_to_googlespreadsheet',
+                    source:     timelineData,
                     embed_id:   'my-timeline'
                 });
             });
@@ -38,5 +45,6 @@
         <%end%>
     </p>
   </div>
+  <div id="my-timeline"></div>
 </body>
 </html>

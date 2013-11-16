@@ -22,7 +22,6 @@ circle {
 }
 
 path {
-  fill: #708090;
   stroke: #696969;
 }
 
@@ -71,12 +70,22 @@ var svg = d3.select("#body").append("svg:svg")
     .attr("height", 800)
     .on("mousedown", mousedown);
 
+function get_random_color() {
+    var letters = '0123456789ABCDEF'.split('');
+    var color = '#';
+    for (var i = 0; i < 2; i++ ) {
+        color += letters[Math.round(Math.random() * 15)];
+    }
+    color += 'EEEE'
+    return color;
+  }
 d3.json("world-countries.json", function(collection) {
   feature = svg.selectAll("path")
       .data(collection.features)
       .enter()
         .append("svg:path")
           .attr("d", clip)
+          .attr("fill", get_random_color)
           .attr("id", function(d) { return d.properties.name; })
           .on("click", function(d) { window.location = "/country/" + d.properties.name });
       // attempt to add a data id attribute
