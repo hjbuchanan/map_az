@@ -24,9 +24,17 @@ class CountriesController < ApplicationController
 
     #NYT api response code
     country_articles=HTTParty.get("http://api.nytimes.com/svc/search/v2/articlesearch.json?q=#{country_name}&begin_date=20131001&sort=oldest&pages=0&api-key=ae59fa9ced00c8e0934ee66358d80da6:1:68403659")
-    # country_articles=HTTParty.get("http://api.nytimes.com/svc/search/v2/articlesearch.json?q=#{country_name}&begin_date=20131001&sort=oldest&pages=0&api-key=ae59fa9ced00c8e0934ee66358d80da6:1:68403659")
     @country_NYT=JSON.parse(country_articles.body)
     #take the nyt data and set it into a hash
+
+   # use the timeswire api to get a count of the articles coming in
+   # the return object will be a json object
+   # take the length of the results array
+   # that is the country count
+   # assign it to country count in database?
+   news_wire = HTTParty.get("http://api.nytimes.com/svc/news/v3/content/Canada/all/168.json?api-key=5a7fe6dfba4acafda569544245eb6c10:2:68403659")
+   @news_wire_results=JSON.parse(news_wire)
+
     @timeline_events_ar =[]
     @country_NYT["response"]["docs"].each_with_index do |result, i|
       @date_instance = {
