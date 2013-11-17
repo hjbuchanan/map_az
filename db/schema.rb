@@ -11,12 +11,13 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20131112183034) do
+ActiveRecord::Schema.define(version: 20131116193001) do
 
   create_table "countries", force: true do |t|
     t.string   "name"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.integer  "heat"
   end
 
 end

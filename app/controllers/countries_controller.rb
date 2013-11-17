@@ -10,6 +10,30 @@ class CountriesController < ApplicationController
     @countries = Country.all
   end
 
+  def refresh_news_count
+    @countries = Country.all
+    @country_status = []
+    if false
+      @countries.reverse_each do |country|
+        sleep(0.2)
+        enc_name = URI::encode(country.name)
+        news_wire = HTTParty.get("http://api.nytimes.com/svc/search/v2/articlesearch.json?q=#{enc_name}&begin_date=20131101&sort=oldest&pages=0&api-key=ae59fa9ced00c8e0934ee66358d80da6:1:68403659")
+        @news_wire_results=JSON.parse(news_wire.body)
+        @hits = @news_wire_results["response"]["meta"]["hits"]
+        if @hits
+          logger.info "#{country.name} => got #{@hits} hits"
+          country.heat = @hits
+          if country.save
+            @country_status << {name: country.name, status: "saved, found #{@hits} articles"}
+          else
+            @country_status << {name: country.name, status: "failed, found #{@hits} articles"}
+          end
+        else
+          logger.info "no hits for [#{country.name}]"
+        end
+      end
+    end
+  end
   # GET /countries/1
   # GET /countries/1.json
   #this needs to take the name of the country, match it to the name in the database
@@ -27,13 +51,10 @@ class CountriesController < ApplicationController
     @country_NYT=JSON.parse(country_articles.body)
     #take the nyt data and set it into a hash
 
-   # use the timeswire api to get a count of the articles coming in
-   # the return object will be a json object
-   # take the length of the results array
-   # that is the country count
-   # assign it to country count in database?
-   news_wire = HTTParty.get("http://api.nytimes.com/svc/news/v3/content/Canada/all/168.json?api-key=5a7fe6dfba4acafda569544245eb6c10:2:68403659")
-   @news_wire_results=JSON.parse(news_wire)
+   # getting the heat index number
+   news_wire = HTTParty.get("http://api.nytimes.com/svc/search/v2/articlesearch.json?q=#{country_name}&begin_date=20131101&sort=oldest&pages=0&api-key=ae59fa9ced00c8e0934ee66358d80da6:1:68403659")
+   @news_wire_results=JSON.parse(news_wire.body)
+   @heat_index = @news_wire_results["response"]["docs"].length
 
     @timeline_events_ar =[]
     @country_NYT["response"]["docs"].each_with_index do |result, i|

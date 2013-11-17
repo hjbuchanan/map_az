@@ -1,0 +1,5 @@
+<h1>loaded country status</h1>
+
+<%= @country_status.each do |status| %>
+<b><%=status[:name] %></b> - <%= status[:status] %><br>
+<% end %>

@@ -11,6 +11,7 @@ MapAz::Application.routes.draw do
   get "country/:name" => "countries#show"
   get "country/:name/timeline" => "countries#get_timeline_json"
   get "country/:name/time" => "countries#time_line"
+  get "refresh_news_count" => "countries#refresh_news_count", as: :refresh_news_count
     # Example of regular route:
   #   get 'products/:id' => 'catalog#view'
 

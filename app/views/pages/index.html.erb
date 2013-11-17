@@ -43,6 +43,8 @@ path {
     <script type="text/javascript">
 
 var feature;
+var country_hits = <%= @countries_json %>;
+var max_heat = <%= @max_heat %>;
 
 var projection = d3.geo.azimuthal()
     .scale(380)
@@ -79,13 +81,48 @@ function get_random_color() {
     color += 'EEEE'
     return color;
   }
+  function clog(x) {
+    if (console.log) { console.log(x);}
+  }
+function get_color(d) {
+  // debugger;
+  var norm_heat = country_hits[d.properties.name].norm_heat;
+  var heat = country_hits[d.properties.name].heat;
+  var country_heat_level = Math.round(Math.log(heat)/Math.log(2));
+  var level_colors = [
+    'white',
+    '#E6E6FA',
+    '#CAE1FF',
+    '#B0C4DE',
+    '#A2B5CD',
+    '#6E7B8B',
+    '#6495ED',
+    '#3A5FCD',
+    '#3D59AB',
+    '#0000EE',
+    '#00008B'
+  ];
+  // debugger;
+  // var heat_rgb = (heat/max_heat)*255;
+  // clog(parseInt(heat_rgb));
+  // var heat_hex = parseInt(heat_rgb).toString(16);
+
+  // if (heat_hex.length === 1)  {
+  //   heat_hex = "0"+heat_hex;
+  // }
+  // heat_hex += 'EEEE';
+  // // clog(heat_hex);
+  // return "#"+heat_hex;
+
+  return level_colors[country_heat_level];
+}
 d3.json("world-countries.json", function(collection) {
   feature = svg.selectAll("path")
       .data(collection.features)
       .enter()
         .append("svg:path")
           .attr("d", clip)
-          .attr("fill", get_random_color)
+          .attr("fill", function(d) { return get_color(d); })
           .attr("id", function(d) { return d.properties.name; })
           .on("click", function(d) { window.location = "/country/" + d.properties.name });
       // attempt to add a data id attribute
