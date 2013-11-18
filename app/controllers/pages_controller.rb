@@ -10,16 +10,18 @@ class PagesController < ApplicationController
     @countries_hash = {}
     @max_heat = 0
     @countries.each do |country|
-      if country.heat && country.heat > @max_heat
+        if country.heat
+          if  country.heat > @max_heat
           @max_heat = country.heat
+        end
       end
-    end
     exponent = 1
     @max_heat **= exponent
     # heat_num = country.heat ** exponent
     @countries.each do |country|
       heat_num = country.heat ** exponent
       @countries_hash[country.name] = {heat: heat_num, norm_heat: (heat_num*100/@max_heat).to_i}
+      end
     end
     @countries_json = @countries_hash.to_json.html_safe
   end
