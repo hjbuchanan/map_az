@@ -45,14 +45,7 @@
   <body style="font-family: Georgia; border: 0 none;">
     <div id="branding"  style="float: left;" class="col-lg-4"></div><br />
     <p id="notice"><%= notice %></p>
-    <div class="col-6">
-      <p id="country_name">
-        <h1>Google News Results for <%= @country.name %>:</h1> <% @country_news["responseData"]["results"].each do |result| %>
-        <h3><a href=<%= result["unescapedUrl"] %>><%= result["title"].html_safe %></a></h3>
-        <p><%= result["content"].html_safe %></p>
-        <% end %>
-      </p>
-  </div>
+
   <div id="my-timeline"></div>
 </body>
 </html>

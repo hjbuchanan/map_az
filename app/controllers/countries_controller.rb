@@ -13,11 +13,20 @@ class CountriesController < ApplicationController
   def refresh_news_count
     @countries = Country.all
     @country_status = []
-    if false
+    # find current date to throw into country instead of hard coding
+    # Time.parse(result["current_Date"]).strftime("%Y,%m,%d")
+    # do news in the past month for the heat map?
+    current_Date= Time.new
+    current_year = current_Date.year.to_s
+    current_month = current_Date.month.to_s
+    @api_form_date = current_year+current_month+"01"
+
+
+    # if false
       @countries.reverse_each do |country|
         sleep(0.2)
         enc_name = URI::encode(country.name)
-        news_wire = HTTParty.get("http://api.nytimes.com/svc/search/v2/articlesearch.json?q=#{enc_name}&begin_date=20131101&sort=oldest&pages=0&api-key=ae59fa9ced00c8e0934ee66358d80da6:1:68403659")
+        news_wire = HTTParty.get("http://api.nytimes.com/svc/search/v2/articlesearch.json?q=#{enc_name}&begin_date=#{@api_form_date}&sort=oldest&pages=0&api-key=ae59fa9ced00c8e0934ee66358d80da6:1:68403659")
         @news_wire_results=JSON.parse(news_wire.body)
         @hits = @news_wire_results["response"]["meta"]["hits"]
         if @hits
@@ -32,11 +41,11 @@ class CountriesController < ApplicationController
           logger.info "no hits for [#{country.name}]"
         end
       end
-    end
+    # end
   end
   # GET /countries/1
   # GET /countries/1.json
-  #this needs to take the name of the country, match it to the name in the database
+
   def show
     @country = Country.find_by_name(params[:name])
     @country_news = []
@@ -46,15 +55,20 @@ class CountriesController < ApplicationController
     response = HTTParty.get("http://ajax.googleapis.com/ajax/services/search/news?v=1.0&q=#{country_name}")
     @country_news = JSON.parse(response.body)
 
-    #NYT api response code
-    country_articles=HTTParty.get("http://api.nytimes.com/svc/search/v2/articlesearch.json?q=#{country_name}&begin_date=20131001&sort=oldest&pages=0&api-key=ae59fa9ced00c8e0934ee66358d80da6:1:68403659")
+    #NYT api response code for the timeline js
+    # could use the dates from the last month
+    current_Date= Time.new
+    current_year = current_Date.year.to_s
+    current_month = current_Date.month.to_s
+    @api_form_date = current_year+current_month+"01"
+    country_articles=HTTParty.get("http://api.nytimes.com/svc/search/v2/articlesearch.json?q=#{country_name}&begin_date=#{@api_form_date}&sort=oldest&pages=0&api-key=ae59fa9ced00c8e0934ee66358d80da6:1:68403659")
     @country_NYT=JSON.parse(country_articles.body)
     #take the nyt data and set it into a hash
 
    # getting the heat index number
-   news_wire = HTTParty.get("http://api.nytimes.com/svc/search/v2/articlesearch.json?q=#{country_name}&begin_date=20131101&sort=oldest&pages=0&api-key=ae59fa9ced00c8e0934ee66358d80da6:1:68403659")
-   @news_wire_results=JSON.parse(news_wire.body)
-   @heat_index = @news_wire_results["response"]["docs"].length
+   # news_wire = HTTParty.get("http://api.nytimes.com/svc/search/v2/articlesearch.json?q=#{country_name}&begin_date=20131101&sort=oldest&pages=0&api-key=ae59fa9ced00c8e0934ee66358d80da6:1:68403659")
+   # @news_wire_results=JSON.parse(news_wire.body)
+   # @heat_index = @news_wire_results["response"]["docs"].length
 
     @timeline_events_ar =[]
     @country_NYT["response"]["docs"].each_with_index do |result, i|
