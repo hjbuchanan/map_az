@@ -29,6 +29,7 @@ class CountriesController < ApplicationController
         news_wire = HTTParty.get("http://api.nytimes.com/svc/search/v2/articlesearch.json?q=#{enc_name}&begin_date=#{@api_form_date}&sort=oldest&pages=0&api-key=ae59fa9ced00c8e0934ee66358d80da6:1:68403659")
         @news_wire_results=JSON.parse(news_wire.body)
         @hits = @news_wire_results["response"]["meta"]["hits"]
+        # country.update(params[name: => country.name, heat: => @hits])
         if @hits
           logger.info "#{country.name} => got #{@hits} hits"
           country.heat = @hits
@@ -211,6 +212,6 @@ class CountriesController < ApplicationController
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def country_params
-      params.permit(:name)
+      params.permit(:name, :heat)
     end
 end
