@@ -10,8 +10,8 @@ class PagesController < ApplicationController
     @countries_hash = {}
     @max_heat = 0
     @countries.each do |country|
-      if country.heat > @max_heat
-        @max_heat = country.heat
+      if country.heat && country.heat > @max_heat
+          @max_heat = country.heat
       end
     end
     exponent = 1

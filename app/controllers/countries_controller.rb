@@ -28,7 +28,7 @@ class CountriesController < ApplicationController
         enc_name = URI::encode(country.name)
         news_wire = HTTParty.get("http://api.nytimes.com/svc/search/v2/articlesearch.json?q=#{enc_name}&begin_date=#{@api_form_date}&sort=oldest&pages=0&api-key=ae59fa9ced00c8e0934ee66358d80da6:1:68403659")
         @news_wire_results=JSON.parse(news_wire.body)
-        @hits = @news_wire_results["response"]["meta"]["hits"]
+        @hits = @news_wire_results["response"]["meta"]["hits"] || 0
         # country.update(params[name: => country.name, heat: => @hits])
         if @hits
           logger.info "#{country.name} => got #{@hits} hits"
