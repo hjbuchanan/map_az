@@ -3,9 +3,10 @@
 <html>
 <head>
 </head>
+
 svg {
-  width: 1280px;
-  height: 800px;
+  width: 1080px;
+  height: 600px;
   pointer-events: all;
 }
 
@@ -16,6 +17,9 @@ body {
       -o-background-size: cover;
       background-size: cover;
   }
+#body {
+  float: right;
+}
  h1 {
   font-family: "Avant Garde", sans-serif;
   font-size: 60px;
@@ -26,6 +30,7 @@ body {
   margin-right: 70px;
   margin-bottom: 0px;
  }
+
 
 circle {
   fill: #ADD8E6;
@@ -39,23 +44,12 @@ path {
   color: #000052;
 }
 
-    </style>
+</style>
 
-    <div id="body">
-      <h1>G News</h1>
-      <div id="footer">
-        d3.geo.azimuthal
-        <div class="hint">drag to rotate the origin</div>
-        <div><select>
-          <option value="equalarea">equalarea</option>
-          <option value="equidistant">equidistant</option>
-          <option value="gnomonic">gnomonic</option>
-          <option value="orthographic" selected>orthographic</option>
-          <option value="stereographic">stereographic</option>
-        </select></div>
-      </div>
-    </div>
-    <script type="text/javascript">
+  <div id="body">
+     <h1>G News</h1>
+  </div>
+  <script type="text/javascript">
 
 var feature;
 var country_hits = <%= @countries_json %>;
