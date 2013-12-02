@@ -44,144 +44,176 @@ path {
   color: #000052;
 }
 
+#directions {
+  float: left;
+  color: #00008b;
+  line-height: 90%;
+  font-family: "Trebuchet MS", Helvetica, sans-serif;
+}
+
+#directions h1 {
+  margin-top: 40px;
+}
+
+#directions p {
+  margin-left: 55px;
+  font-weight: bold;
+  font-family: "Trebuchet MS", Helvetica, sans-serif;
+}
+
+#body {
+  height: 900px;
+}
+
+#bottom {
+  float: left;
+  margin-left: 100px;
+  height: 100px;
+}
+
+
 </style>
-
-  <div id="body">
-     <h1>G News</h1>
+  <div id="directions">
+    <h1>G News</h1>
+    <p>Click On A Country to See Recent News</p>
   </div>
-  <script type="text/javascript">
+  <div id="body">
+  </div>
+  <div id="bottom">
+    <script type="text/javascript">
 
-var feature;
-var country_hits = <%= @countries_json %>;
-var max_heat = <%= @max_heat %>;
+        var feature;
+        var country_hits = <%= @countries_json %>;
+        var max_heat = <%= @max_heat %>;
 
-var projection = d3.geo.azimuthal()
-    .scale(380)
-    .origin([-71.03,42.37])
-    .mode("orthographic")
-    .translate([640, 400]);
+        var projection = d3.geo.azimuthal()
+            .scale(380)
+            .origin([-71.03,42.37])
+            .mode("orthographic")
+            .translate([640, 400]);
 
-var circle = d3.geo.greatCircle()
-    .origin(projection.origin());
+        var circle = d3.geo.greatCircle()
+            .origin(projection.origin());
 
-// TODO fix d3.geo.azimuthal to be consistent with scale
-var scale = {
-  orthographic: 380,
-  stereographic: 380,
-  gnomonic: 380,
-  equidistant: 380 / Math.PI * 2,
-  equalarea: 380 / Math.SQRT2
-};
+        // TODO fix d3.geo.azimuthal to be consistent with scale
+        var scale = {
+          orthographic: 380,
+          stereographic: 380,
+          gnomonic: 380,
+          equidistant: 380 / Math.PI * 2,
+          equalarea: 380 / Math.SQRT2
+        };
 
-var path = d3.geo.path()
-    .projection(projection);
+        var path = d3.geo.path()
+            .projection(projection);
 
-var svg = d3.select("#body").append("svg:svg")
-    .attr("width", 1280)
-    .attr("height", 800)
-    .on("mousedown", mousedown);
+        var svg = d3.select("#body").append("svg:svg")
+            .attr("width", 1280)
+            .attr("height", 800)
+            .on("mousedown", mousedown);
 
-function get_random_color() {
-    var letters = '0123456789ABCDEF'.split('');
-    var color = '#';
-    for (var i = 0; i < 2; i++ ) {
-        color += letters[Math.round(Math.random() * 15)];
-    }
-    color += 'EEEE'
-    return color;
-  }
-  function clog(x) {
-    if (console.log) { console.log(x);}
-  }
-function get_color(d) {
-  // debugger;
-  var norm_heat = country_hits[d.properties.name].norm_heat;
-  var heat = country_hits[d.properties.name].heat;
-  var country_heat_level = Math.round(Math.log(heat)/Math.log(2));
-  var level_colors = [
-    '#ffffff',
-    '#d6d6ff',
-    '#adadff',
-    '#9999ff',
-    '#7070ff',
-    '#4747ff',
-    '#0a0aff',
-    '#0000cc',
-    '#00008b',
-    '#000052',
-    '#000014'
-  ];
-  // debugger;
-  // var heat_rgb = (heat/max_heat)*255;
-  // clog(parseInt(heat_rgb));
-  // var heat_hex = parseInt(heat_rgb).toString(16);
+        function get_random_color() {
+            var letters = '0123456789ABCDEF'.split('');
+            var color = '#';
+            for (var i = 0; i < 2; i++ ) {
+                color += letters[Math.round(Math.random() * 15)];
+            }
+            color += 'EEEE'
+            return color;
+          }
+          function clog(x) {
+            if (console.log) { console.log(x);}
+          }
+        function get_color(d) {
+          // debugger;
+          var norm_heat = country_hits[d.properties.name].norm_heat;
+          var heat = country_hits[d.properties.name].heat;
+          var country_heat_level = Math.round(Math.log(heat)/Math.log(2));
+          var level_colors = [
+            '#ffffff',
+            '#d6d6ff',
+            '#adadff',
+            '#9999ff',
+            '#7070ff',
+            '#4747ff',
+            '#0a0aff',
+            '#0000cc',
+            '#00008b',
+            '#000052',
+            '#000014'
+          ];
+          // debugger;
+          // var heat_rgb = (heat/max_heat)*255;
+          // clog(parseInt(heat_rgb));
+          // var heat_hex = parseInt(heat_rgb).toString(16);
 
-  // if (heat_hex.length === 1)  {
-  //   heat_hex = "0"+heat_hex;
-  // }
-  // heat_hex += 'EEEE';
-  // // clog(heat_hex);
-  // return "#"+heat_hex;
+          // if (heat_hex.length === 1)  {
+          //   heat_hex = "0"+heat_hex;
+          // }
+          // heat_hex += 'EEEE';
+          // // clog(heat_hex);
+          // return "#"+heat_hex;
 
-  return level_colors[country_heat_level];
-}
-d3.json("world-countries.json", function(collection) {
-  feature = svg.selectAll("path")
-      .data(collection.features)
-      .enter()
-        .append("svg:path")
-          .attr("d", clip)
-          .attr("fill", function(d) { return get_color(d); })
-          .attr("id", function(d) { return d.properties.name; })
-          .on("click", function(d) { window.location = "/country/" + d.properties.name });
-      // attempt to add a data id attribute
-      // .setAttribute("data", d.properties.name);
-   // feature.setAttribute("id", d.properties.name;);
-  feature.append("svg:title")
-      .text(function(d) { return d.properties.name; });
-});
+          return level_colors[country_heat_level];
+        }
+        d3.json("world-countries.json", function(collection) {
+          feature = svg.selectAll("path")
+              .data(collection.features)
+              .enter()
+                .append("svg:path")
+                  .attr("d", clip)
+                  .attr("fill", function(d) { return get_color(d); })
+                  .attr("id", function(d) { return d.properties.name; })
+                  .on("click", function(d) { window.location = "/country/" + d.properties.name });
+              // attempt to add a data id attribute
+              // .setAttribute("data", d.properties.name);
+           // feature.setAttribute("id", d.properties.name;);
+          feature.append("svg:title")
+              .text(function(d) { return d.properties.name; });
+        });
 
-d3.select(window)
-    .on("mousemove", mousemove)
-    .on("mouseup", mouseup);
+        d3.select(window)
+            .on("mousemove", mousemove)
+            .on("mouseup", mouseup);
 
-d3.select("select").on("change", function() {
-  projection.mode(this.value).scale(scale[this.value]);
-  refresh(750);
-});
+        d3.select("select").on("change", function() {
+          projection.mode(this.value).scale(scale[this.value]);
+          refresh(750);
+        });
 
-var m0,
-    o0;
+        var m0,
+            o0;
 
-function mousedown() {
-  m0 = [d3.event.pageX, d3.event.pageY];
-  o0 = projection.origin();
-  d3.event.preventDefault();
-}
+        function mousedown() {
+          m0 = [d3.event.pageX, d3.event.pageY];
+          o0 = projection.origin();
+          d3.event.preventDefault();
+        }
 
-function mousemove() {
-  if (m0) {
-    var m1 = [d3.event.pageX, d3.event.pageY],
-        o1 = [o0[0] + (m0[0] - m1[0]) / 8, o0[1] + (m1[1] - m0[1]) / 8];
-    projection.origin(o1);
-    circle.origin(o1)
-    refresh();
-  }
-}
+        function mousemove() {
+          if (m0) {
+            var m1 = [d3.event.pageX, d3.event.pageY],
+                o1 = [o0[0] + (m0[0] - m1[0]) / 8, o0[1] + (m1[1] - m0[1]) / 8];
+            projection.origin(o1);
+            circle.origin(o1)
+            refresh();
+          }
+        }
 
-function mouseup() {
-  if (m0) {
-    mousemove();
-    m0 = null;
-  }
-}
+        function mouseup() {
+          if (m0) {
+            mousemove();
+            m0 = null;
+          }
+        }
 
-function refresh(duration) {
-  (duration ? feature.transition().duration(duration) : feature).attr("d", clip);
-}
+        function refresh(duration) {
+          (duration ? feature.transition().duration(duration) : feature).attr("d", clip);
+        }
 
-function clip(d) {
-  return path(circle.clip(d));
-}
-    </script>
+        function clip(d) {
+          return path(circle.clip(d));
+        }
+      </script>
+</div>
 </html>
