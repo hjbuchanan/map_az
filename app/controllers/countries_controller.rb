@@ -97,7 +97,6 @@ class CountriesController < ApplicationController
         "date" => @timeline_events_ar
       }
     }
-    render :json => @timeline
 
   end
 
