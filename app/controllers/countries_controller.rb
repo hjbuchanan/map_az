@@ -61,7 +61,7 @@ class CountriesController < ApplicationController
     current_Date= Time.new
     current_year = current_Date.year.to_s
     current_month = current_Date.month.to_s
-    @api_form_date = current_year+current_month+"01"
+    @api_form_date = current_year+"0"+current_month+"01"
     country_articles=HTTParty.get("http://api.nytimes.com/svc/search/v2/articlesearch.json?q=#{country_name}&begin_date=#{@api_form_date}&sort=oldest&pages=0&api-key=ae59fa9ced00c8e0934ee66358d80da6:1:68403659")
     @country_NYT=JSON.parse(country_articles.body)
     #take the nyt data and set it into a hash
